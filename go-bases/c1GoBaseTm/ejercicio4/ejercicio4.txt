@@ -1,0 +1,13 @@
+Resolución:
+	var apellido string = "Gomez"
+	var edad int = 35
+	boolean := false
+	var sueldo float64 = 45857.90
+	var nombre string = "Julián"
+
+Mejorada:
+	var nombre = "Julián"
+	var apellido = "Gomez"
+	var edad = 35
+	boolean := false
+	var sueldo = 45857.90 //Sistema MacBook Pro, 13", M1, 2020

@@ -1,0 +1,14 @@
+var 1nombre string -> MAL, no puede empezar por numero
+var apellido string -> BIEN
+var int edad -> MAL, el tipo va despues del nombre de la variable
+1apellido := 6 -> MAL, no puede empezar por numero (ademas de que a una variable que deberia tener un string le esta poniendo un numero, pero eso solo por contexto)
+var licencia_de_conducir = true -> MAL, Usa snake_case en vez de camelCase
+var estatura de la persona int -> MAL, nombre de variable con espacios
+cantidadDeHijos := 2 -> BIEN
+
+Correcciones:
+var primerNombre string || var nombre1 string
+var edad int
+apellido := 6 || primerApellido := 6 || apellido1 := 6 || apellido := "Hernandez"
+var licenciaDeConducir = true
+var estaturaDeLaPersona int
