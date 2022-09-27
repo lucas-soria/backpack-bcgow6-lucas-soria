@@ -22,22 +22,16 @@ var (
 )
 
 func OtorgarPrestamo() {
-	if edad > 22 {
-		fmt.Println("Tiene mas de 21")
-		if empleado {
-			fmt.Println("Está empleado")
-			if antiguedad > 1 {
-				fmt.Println("Tiene mas de un año de antigüedad")
-				if sueldo > 100000 {
-					fmt.Println("No le cobra intereses")
-				}
-			} else {
-				fmt.Println("No tiene mas de 1 año de antiguedad")
-			}
-		} else {
-			fmt.Println("No está empleado")
-		}
-	} else {
-		fmt.Println("No tiene mas de 21")
+	switch {
+	case edad <= 22:
+		fmt.Println("Debes ser mayor de 22 años de edad.")
+	case !empleado:
+		fmt.Println("Debes estar empleado.")
+	case antiguedad < 1:
+		fmt.Println("Debes tener una antiguedad mayor a 1 año")
+	case sueldo < 100000:
+		fmt.Println("Otorgar credito con interés ✔")
+	default:
+		fmt.Println("Otorgar credito sin interés ✅")
 	}
 }
