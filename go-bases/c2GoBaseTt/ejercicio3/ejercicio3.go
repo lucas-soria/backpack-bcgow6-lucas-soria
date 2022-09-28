@@ -45,15 +45,15 @@ type Ecommerce interface {
 	Agregar(p Producto) []Producto
 }
 
+// No hace falta que las estructuras tengan embebida la interfaz para implementarla, solo hace falta que implementen
+// sus métodos
 type producto struct {
-	p              Producto
 	tipoDeProducto string
 	nombre         string
 	precio         float64
 }
 
 type tienda struct {
-	t         Ecommerce
 	productos []Producto
 }
 
