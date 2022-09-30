@@ -32,7 +32,7 @@ func (b *booking) Read(id int) (t Ticket, err error) {
 			return
 		}
 	}
-	err = fmt.Errorf("%s: ticket with id %d", TicketNotFound, id)
+	err = fmt.Errorf("problems reading ticket:\n\t%s: ticket with id %d", TicketNotFound, id)
 	return
 }
 
@@ -73,7 +73,7 @@ func (b *booking) findIndex(id int) (index int, err error) {
 }
 
 func max(tickets []Ticket) (max int) {
-	max = tickets[0].id
+	max = tickets[len(tickets)-1].id
 	for _, ticket := range tickets {
 		if ticket.id > max {
 			max = ticket.id
