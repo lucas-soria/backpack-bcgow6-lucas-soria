@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "transactionCode": "89283hd87a8d87d8",
+    "currency": "ARS",
+    "amount": 1770.99,
+    "sender": "3294lkahs9832983",
+    "receiver": "87s78dd8d9ds",
+    "date": "2022-10-03T00:00:00-03:00"
+  },
+  {
+    "id": 2,
+    "transactionCode": "89288s387a8d87d8",
+    "currency": "ARS",
+    "amount": 220.00,
+    "sender": "87s78dd8d9ds",
+    "receiver": "3294lkahs9832983",
+    "date": "2022-10-07T00:00:00-03:00"
+  },
+  {
+    "id": 3,
+    "transactionCode": "99283hd87a8d87d8",
+    "currency": "USD",
+    "amount": 560.31,
+    "sender": "274548wn6dne7db3",
+    "receiver": "9d6ds54ds23n35kl",
+    "date": "2022-09-27T0:00:00-03:00"
+  },
+  {
+    "id": 4,
+    "transactionCode": "89273hd87a8d87d8",
+    "currency": "USD",
+    "amount": 170.99,
+    "sender": "3294lkahe9832983",
+    "receiver": "87s78dd8d9ds",
+    "date": "2022-10-10T00:00:00-03:00"
+  },
+  {
+    "id": 5,
+    "transactionCode": "89288s388a8d87d8",
+    "currency": "ARS",
+    "amount": 12220.00,
+    "sender": "87s78dd8d9ds",
+    "receiver": "3294lkahs9832983",
+    "date": "2022-10-07T00:00:00-03:00"
+  },
+  {
+    "id": 6,
+    "transactionCode": "99283hd87a8d87g8",
+    "currency": "USD",
+    "amount": 60.00,
+    "sender": "274548wn6dne7db3",
+    "receiver": "9d6ds54ds23n35kl",
+    "date": "2022-02-27T0:00:00-03:00"
+  },
+  {
+    "id": 7,
+    "transactionCode": "89483hd87a8d87d8",
+    "currency": "ARS",
+    "amount": 300.00,
+    "sender": "3294lkahs9832983",
+    "receiver": "87s78dd8d9ds",
+    "date": "2022-10-13T00:00:00-03:00"
+  },
+  {
+    "id": 8,
+    "transactionCode": "89288s387amd87d8",
+    "currency": "ARS",
+    "amount": 2220.00,
+    "sender": "87s78dd8d9ds",
+    "receiver": "3294lkahs9832983",
+    "date": "2022-10-07T00:00:00-03:00"
+  },
+  {
+    "id": 9,
+    "transactionCode": "99t83hd87a8d87d8",
+    "currency": "USD",
+    "amount": 560.31,
+    "sender": "274548wn6dne7db3",
+    "receiver": "9d6ds54ds23n35kl",
+    "date": "2022-09-27T0:00:00-03:00"
+  }
+]
