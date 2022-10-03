@@ -103,14 +103,3 @@ func main() {
 		log.Fatalf("Error: %+v", err)
 	}
 }
-
-/*
-if transaction.TransactionCode == queries.Get("transactionCode") &&
-					transaction.Currency == queries.Get("currency") &&
-					fmt.Sprintf("%.2f", transaction.Amount) == queries.Get("amount") &&
-					transaction.Sender == queries.Get("sender") &&
-					transaction.Receiver == queries.Get("receiver") &&
-					fmt.Sprintf("%v", transaction.Date) == queries.Get("date") {
-					filteredTransactions = append(filteredTransactions, &transaction)
-				}
-*/
