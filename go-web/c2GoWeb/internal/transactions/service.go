@@ -11,6 +11,7 @@ type Service interface {
 	GetOne(id int) (Transaction, error)
 	Store(transaction Transaction) (Transaction, error)
 	Update(id int, transaction Transaction) (Transaction, error)
+	PartialUpdate(id int, transactionCode string, amount float64) (Transaction, error)
 	Remove(id int) (int, error)
 }
 
@@ -46,25 +47,25 @@ func (s *service) GetAll(queries url.Values) (ts []Transaction, err error) {
 
 func (s *service) GetOne(id int) (t Transaction, err error) {
 	t, err = s.repository.FindOne(id)
-	if err != nil {
-		err = fmt.Errorf("error: problems in repository: %w", err)
-	}
 	return
 }
 
 func (s *service) Store(transaction Transaction) (t Transaction, err error) {
-	tr, SaveErr := s.repository.Save(transaction)
-	if SaveErr != nil {
-		err = fmt.Errorf("error: problems in repository: %w", err)
-	}
-	t = tr
+	t, _ = s.repository.Save(transaction)
 	return
 }
 
 func (s *service) Update(id int, transaction Transaction) (t Transaction, err error) {
+	t, err = s.repository.Update(id, transaction)
 	return
 }
 
-func (s *service) Remove(id int) (_ int, err error) {
-	return id, err
+func (s *service) PartialUpdate(id int, transactionCode string, amount float64) (t Transaction, err error) {
+	t, err = s.repository.PartialUpdate(id, transactionCode, amount)
+	return
+}
+
+func (s *service) Remove(id int) (idDeleted int, err error) {
+	idDeleted, err = s.repository.Remove(id)
+	return
 }

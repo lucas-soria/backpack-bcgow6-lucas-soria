@@ -8,8 +8,8 @@ import (
 
 const (
 	TransactionNotFound = "transaction not found"
-	CantUpdate          = "problems updating transaction"
-	CantDelete          = "problems deleting transaction"
+	CantUpdate          = "could not update transaction"
+	CantDelete          = "could not delete transaction"
 )
 
 type Repository interface {
@@ -17,6 +17,7 @@ type Repository interface {
 	FindOne(id int) (Transaction, error)
 	Save(transaction Transaction) (Transaction, error)
 	Update(id int, transaction Transaction) (Transaction, error)
+	PartialUpdate(id int, transactionCode string, amount float64) (Transaction, error)
 	Remove(id int) (int, error)
 }
 
@@ -48,7 +49,7 @@ func (r *repository) findIndex(id int) (index int, err error) {
 			return
 		}
 	}
-	err = fmt.Errorf("%s: transaction with id %d", TransactionNotFound, id)
+	err = fmt.Errorf("%s: id %d", TransactionNotFound, id)
 	return
 }
 
@@ -74,7 +75,7 @@ func (r *repository) ReadFile() {
 	fmt.Println(r.LastId)
 }
 
-func (r *repository) FindAll() (ts []Transaction, err error) {
+func (r *repository) FindAll() ([]Transaction, error) {
 	return r.ts, nil
 }
 
@@ -85,7 +86,7 @@ func (r *repository) FindOne(id int) (t Transaction, err error) {
 			return
 		}
 	}
-	err = fmt.Errorf("%s: transaction with id %d", TransactionNotFound, id)
+	err = fmt.Errorf("%s: id %d", TransactionNotFound, id)
 	return
 }
 
@@ -100,16 +101,24 @@ func (r *repository) Save(transaction Transaction) (t Transaction, err error) {
 func (r *repository) Update(id int, transaction Transaction) (t Transaction, err error) {
 	update, err := r.FindOne(id)
 	if err != nil {
-		err = fmt.Errorf("%s:\n\t%w", CantUpdate, err)
+		err = fmt.Errorf("%s. %w", CantUpdate, err)
 		return
 	}
 	index, _ := r.findIndex(update.Id)
-	r.ts[index].TransactionCode = transaction.TransactionCode
-	r.ts[index].Currency = transaction.Currency
-	r.ts[index].Amount = transaction.Amount
-	r.ts[index].Sender = transaction.Sender
-	r.ts[index].Receiver = transaction.Receiver
-	r.ts[index].Date = transaction.Date
+	r.ts[index] = transaction
+	t = r.ts[index]
+	return
+}
+
+func (r *repository) PartialUpdate(id int, transactionCode string, amount float64) (t Transaction, err error) {
+	update, err := r.FindOne(id)
+	if err != nil {
+		err = fmt.Errorf("%s. %w", CantUpdate, err)
+		return
+	}
+	index, _ := r.findIndex(update.Id)
+	r.ts[index].TransactionCode = transactionCode
+	r.ts[index].Amount = amount
 	t = r.ts[index]
 	return
 }
@@ -117,7 +126,7 @@ func (r *repository) Update(id int, transaction Transaction) (t Transaction, err
 func (r *repository) Remove(id int) (deletedId int, err error) {
 	index, err := r.findIndex(id)
 	if err != nil {
-		err = fmt.Errorf("%s:\n\t%w", CantDelete, err)
+		err = fmt.Errorf("%s. %w", CantDelete, err)
 		return
 	}
 	copy(r.ts[index:], r.ts[index+1:])
