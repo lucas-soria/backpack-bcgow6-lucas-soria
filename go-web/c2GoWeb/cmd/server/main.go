@@ -2,13 +2,20 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/cmd/server/handler"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/internal/transactions"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/store"
 	"log"
 )
 
 func main() {
-	transactionsRepository := transactions.NewRepository()
+	if err := godotenv.Load(".env.local"); err != nil {
+		log.Fatalf("Error reading .env file:\n%+v", err.Error())
+	}
+	// Initialization of services
+	transactionsStore := store.NewStore(store.FileType, "./transactions.json")
+	transactionsRepository := transactions.NewRepository(transactionsStore)
 	transactionsService := transactions.NewService(transactionsRepository)
 	transactionsHandler := handler.NewHandler(transactionsService)
 	engine := gin.Default()
@@ -32,6 +39,6 @@ func main() {
 	}
 
 	if err := engine.Run(); err != nil {
-		log.Fatalf("Error: %+v", err)
+		log.Fatalf("Error running engine:\n%+v", err.Error())
 	}
 }

@@ -1,9 +1,8 @@
 package transactions
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/store"
 )
 
 const (
@@ -22,8 +21,7 @@ type Repository interface {
 }
 
 type repository struct {
-	ts     []Transaction
-	LastId int
+	db store.Store
 }
 
 type Transaction struct {
@@ -36,14 +34,32 @@ type Transaction struct {
 	Date            string  `json:"date" binding:"required"` // TODO: con db cambiar a time.Time
 }
 
-func NewRepository() Repository {
-	var r = &repository{}
-	r.ReadFile()
-	return r
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
+	}
+}
+
+func (r *repository) getLastId() (lastId int, err error) {
+	var ts []Transaction
+	if err = r.db.Read(&ts); err != nil {
+		return
+	}
+	if len(ts) != 0 {
+		lastId = ts[len(ts)-1].Id
+	}
+	for _, t := range ts {
+		if t.Id > lastId {
+			lastId = t.Id
+		}
+	}
+	return
 }
 
 func (r *repository) findIndex(id int) (index int, err error) {
-	for i, t := range r.ts {
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	for i, t := range ts {
 		if t.Id == id {
 			index = i
 			return
@@ -53,34 +69,15 @@ func (r *repository) findIndex(id int) (index int, err error) {
 	return
 }
 
-func (r *repository) getLastId() (lastId int) {
-	if len(r.ts) != 0 {
-		r.LastId = r.ts[len(r.ts)-1].Id
-	}
-	for _, t := range r.ts {
-		if t.Id > r.LastId {
-			r.LastId = t.Id
-		}
-	}
+func (r *repository) FindAll() (ts []Transaction, err error) {
+	err = r.db.Read(&ts)
 	return
 }
 
-func (r *repository) ReadFile() {
-	if textBytes, err := os.ReadFile("./transactions.json"); err != nil {
-		panic(fmt.Sprintf("error: %v", err.Error()))
-	} else if err1 := json.Unmarshal(textBytes, &r.ts); err1 != nil {
-		panic(fmt.Sprintf("error: %v", err1.Error()))
-	}
-	r.getLastId()
-	fmt.Println(r.LastId)
-}
-
-func (r *repository) FindAll() ([]Transaction, error) {
-	return r.ts, nil
-}
-
 func (r *repository) FindOne(id int) (t Transaction, err error) {
-	for _, tr := range r.ts {
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	for _, tr := range ts {
 		if tr.Id == id {
 			t = tr
 			return
@@ -91,10 +88,13 @@ func (r *repository) FindOne(id int) (t Transaction, err error) {
 }
 
 func (r *repository) Save(transaction Transaction) (t Transaction, err error) {
-	r.LastId++
-	transaction.Id = r.LastId
-	r.ts = append(r.ts, transaction)
+	lastId, err := r.getLastId()
+	transaction.Id = lastId + 1
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	ts = append(ts, transaction)
 	t = transaction
+	err = r.db.Write(&ts)
 	return
 }
 
@@ -105,8 +105,13 @@ func (r *repository) Update(id int, transaction Transaction) (t Transaction, err
 		return
 	}
 	index, _ := r.findIndex(update.Id)
-	r.ts[index] = transaction
-	t = r.ts[index]
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	oid := ts[index].Id
+	ts[index] = transaction
+	ts[index].Id = oid
+	err = r.db.Write(&ts)
+	t = ts[index]
 	return
 }
 
@@ -117,9 +122,12 @@ func (r *repository) PartialUpdate(id int, transactionCode string, amount float6
 		return
 	}
 	index, _ := r.findIndex(update.Id)
-	r.ts[index].TransactionCode = transactionCode
-	r.ts[index].Amount = amount
-	t = r.ts[index]
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	ts[index].TransactionCode = transactionCode
+	ts[index].Amount = amount
+	err = r.db.Write(&ts)
+	t = ts[index]
 	return
 }
 
@@ -129,9 +137,10 @@ func (r *repository) Remove(id int) (deletedId int, err error) {
 		err = fmt.Errorf("%s. %w", CantDelete, err)
 		return
 	}
-	copy(r.ts[index:], r.ts[index+1:])
-	r.ts[len(r.ts)-1] = Transaction{}
-	r.ts = r.ts[:len(r.ts)-1]
+	var ts []Transaction
+	err = r.db.Read(&ts)
+	ts = append(ts[:index], ts[index+1:]...)
+	err = r.db.Write(&ts)
 	deletedId = id
 	return
 }
