@@ -64,6 +64,11 @@ func (c *Controller) HelloMessageHandler(ctx *gin.Context) {
 	return
 }
 
+// GetAll
+// @Summary List transactions
+// @Produce json
+// @Success 200 {object} web.Response
+// @Router  /transactions [get]
 func (c *Controller) GetAll(ctx *gin.Context) {
 	queries := ctx.Request.URL.Query()
 	ts, _ := c.service.GetAll(queries)
@@ -78,6 +83,14 @@ func (c *Controller) GetAll(ctx *gin.Context) {
 	return
 }
 
+// GetOne
+// @Summary Retrieve one transaction
+// @Param   id path int true "transaction ID"
+// @Produce json
+// @Success 200 {object} web.Response
+// @Failure 404 {object} web.Response
+// @Failure 400 {object} web.Response
+// @Router  /transactions/{id} [get]
 func (c *Controller) GetOne(ctx *gin.Context) {
 	id, err := strconv.Atoi(ctx.Param("id"))
 	if err != nil {
@@ -94,9 +107,9 @@ func (c *Controller) GetOne(ctx *gin.Context) {
 	t, err := c.service.GetOne(id)
 	if err != nil {
 		ctx.JSON(
-			http.StatusBadRequest,
+			http.StatusNotFound,
 			web.NewResponse(
-				400,
+				404,
 				nil,
 				fmt.Sprintf("while retrieving transaction. %s", err),
 			),
@@ -136,6 +149,16 @@ func validateFields(err error) (errs string) {
 	return
 }
 
+// Create
+// @Summary Create a new transaction
+// @Accept  json
+// @Produce json
+// @Param   token       header   string  true "Security Token"
+// @Param   transaction body     Request true "Transaction to be created"
+// @Success 201         {object} web.Response
+// @Failure 401         {object} web.Response
+// @Failure 400         {object} web.Response
+// @Router  /transactions/ [post]
 func (c *Controller) Create(ctx *gin.Context) {
 	if err := validateToken(ctx); err != nil {
 		ctx.JSON(
@@ -173,6 +196,16 @@ func (c *Controller) Create(ctx *gin.Context) {
 	return
 }
 
+// Update
+// @Summary Update existing transaction
+// @Accept  json
+// @Produce json
+// @Param   id          path     int     true "transaction ID"
+// @Param   transaction body     Request true "Updated values of the transaction"
+// @Success 200         {object} web.Response
+// @Failure 400         {object} web.Response
+// @Failure 404         {object} web.Response
+// @Router  /transactions/{id} [put]
 func (c *Controller) Update(ctx *gin.Context) {
 	id, errId := strconv.Atoi(ctx.Param("id"))
 	if errId != nil {
@@ -222,6 +255,16 @@ func (c *Controller) Update(ctx *gin.Context) {
 	return
 }
 
+// PartialUpdate
+// @Summary Update some values of an existing transaction
+// @Accept  json
+// @Produce json
+// @Param   id          path     int     true "transaction ID"
+// @Param   transaction body     Request true "Updated values of the transaction"
+// @Success 200         {object} web.Response
+// @Failure 400         {object} web.Response
+// @Failure 404         {object} web.Response
+// @Router  /transactions/{id} [patch]
 func (c *Controller) PartialUpdate(ctx *gin.Context) {
 	id, errId := strconv.Atoi(ctx.Param("id"))
 	if errId != nil {
@@ -271,6 +314,14 @@ func (c *Controller) PartialUpdate(ctx *gin.Context) {
 	return
 }
 
+// Delete
+// @Summary Delete transaction
+// @Produce json
+// @Param   id path int true "transaction ID"
+// @Success 204
+// @Failure 400 {object} web.Response
+// @Failure 404 {object} web.Response
+// @Router  /transactions/{id} [delete]
 func (c *Controller) Delete(ctx *gin.Context) {
 	id, errId := strconv.Atoi(ctx.Param("id"))
 	if errId != nil {
