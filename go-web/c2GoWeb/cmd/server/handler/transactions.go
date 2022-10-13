@@ -8,7 +8,6 @@ import (
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/internal/transactions"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/web"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -127,13 +126,6 @@ func (c *Controller) GetOne(ctx *gin.Context) {
 	return
 }
 
-func validateToken(ctx *gin.Context) (err error) {
-	if token := ctx.Request.Header.Get("token"); token != os.Getenv("SUPER_SECRET_TOKEN") {
-		return fmt.Errorf("invalid token: %s", token)
-	}
-	return
-}
-
 func validateFields(err error) (errs string) {
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
@@ -160,17 +152,6 @@ func validateFields(err error) (errs string) {
 // @Failure 400         {object} web.Response
 // @Router  /transactions/ [post]
 func (c *Controller) Create(ctx *gin.Context) {
-	if err := validateToken(ctx); err != nil {
-		ctx.JSON(
-			http.StatusUnauthorized,
-			web.NewResponse(
-				401,
-				nil,
-				"you do not have permission to do this request",
-			),
-		)
-		return
-	}
 	var r Request
 	if err := ctx.ShouldBindJSON(&r); err != nil {
 		errs := validateFields(err)
@@ -201,6 +182,7 @@ func (c *Controller) Create(ctx *gin.Context) {
 // @Accept  json
 // @Produce json
 // @Param   id          path     int     true "transaction ID"
+// @Param   token       header   string  true "Security Token"
 // @Param   transaction body     Request true "Updated values of the transaction"
 // @Success 200         {object} web.Response
 // @Failure 400         {object} web.Response
@@ -260,6 +242,7 @@ func (c *Controller) Update(ctx *gin.Context) {
 // @Accept  json
 // @Produce json
 // @Param   id          path     int     true "transaction ID"
+// @Param   token       header   string  true "Security Token"
 // @Param   transaction body     Request true "Updated values of the transaction"
 // @Success 200         {object} web.Response
 // @Failure 400         {object} web.Response
@@ -317,7 +300,8 @@ func (c *Controller) PartialUpdate(ctx *gin.Context) {
 // Delete
 // @Summary Delete transaction
 // @Produce json
-// @Param   id path int true "transaction ID"
+// @Param   id    path   int    true "transaction ID"
+// @Param   token header string true "Security Token"
 // @Success 204
 // @Failure 400 {object} web.Response
 // @Failure 404 {object} web.Response

@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This API Handle MELI Products.",
-        "title": "MELI Bootcamp API Lucas",
+        "description": "This API Handles MELI Transactions.",
+        "title": "MELI Bootcamp API",
         "contact": {},
         "version": "1.0"
     },
@@ -125,6 +125,13 @@
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Updated values of the transaction",
                         "name": "transaction",
                         "in": "body",
@@ -167,6 +174,13 @@
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -201,6 +215,13 @@
                         "description": "transaction ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
                         "required": true
                     },
                     {

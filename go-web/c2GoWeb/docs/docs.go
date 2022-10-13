@@ -134,6 +134,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "description": "Updated values of the transaction",
                         "name": "transaction",
                         "in": "body",
@@ -176,6 +183,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -210,6 +224,13 @@ const docTemplate = `{
                         "description": "transaction ID",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Security Token",
+                        "name": "token",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -299,8 +320,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "MELI Bootcamp API Lucas",
-	Description:      "This API Handle MELI Products.",
+	Title:            "MELI Bootcamp API",
+	Description:      "This API Handles MELI Transactions.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

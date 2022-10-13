@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/cmd/server/handler"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/cmd/server/middleware"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/docs"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/internal/transactions"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/store"
@@ -13,9 +14,9 @@ import (
 	"os"
 )
 
-// @title       MELI Bootcamp API Lucas
+// @title       MELI Bootcamp API
 // @version     1.0
-// @description This API Handle MELI Products.
+// @description This API Handles MELI Transactions.
 func main() {
 	if err := godotenv.Load(".env.local"); err != nil {
 		log.Fatalf("Error reading .env file:\n%+v", err.Error())
@@ -39,13 +40,13 @@ func main() {
 		transactionsPrefix.GET("/", transactionsHandler.GetAll)
 		transactionsPrefix.GET("/:id", transactionsHandler.GetOne)
 		// POST
-		transactionsPrefix.POST("/", transactionsHandler.Create)
-		// PUTs
-		transactionsPrefix.PUT("/:id", transactionsHandler.Update)
+		transactionsPrefix.POST("/", middleware.TokenValidationMiddleware(), transactionsHandler.Create)
+		// PUT
+		transactionsPrefix.PUT("/:id", middleware.TokenValidationMiddleware(), transactionsHandler.Update)
 		// PATCH
-		transactionsPrefix.PATCH("/:id", transactionsHandler.PartialUpdate)
+		transactionsPrefix.PATCH("/:id", middleware.TokenValidationMiddleware(), transactionsHandler.PartialUpdate)
 		// DELETE
-		transactionsPrefix.DELETE("/:id", transactionsHandler.Delete)
+		transactionsPrefix.DELETE("/:id", middleware.TokenValidationMiddleware(), transactionsHandler.Delete)
 	}
 
 	if err := engine.Run(); err != nil {

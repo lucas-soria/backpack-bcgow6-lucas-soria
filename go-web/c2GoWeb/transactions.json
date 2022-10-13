@@ -88,5 +88,14 @@
 		"sender": "3294lkahs9832983",
 		"receiver": "87s78dd8d9ds",
 		"date": "2022-10-13T00:00:00-03:00"
+	},
+	{
+		"id": 12,
+		"transactionCode": "89483hd87a8d87d8",
+		"currency": "ARS",
+		"amount": 300,
+		"sender": "3294lkahs9832983",
+		"receiver": "9d6ds54ds23n35kl",
+		"date": "2022-10-11T0:00:00-03:00"
 	}
 ]
