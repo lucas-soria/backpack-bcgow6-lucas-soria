@@ -27,7 +27,12 @@ func NewService(r Repository) Service {
 }
 
 func (s *service) GetAll(queries url.Values) (ts []domain.Transaction, err error) {
-	repositoryTs, _ := s.repository.FindAll()
+	var repositoryTs []domain.Transaction
+	repositoryTs, err = s.repository.FindAll()
+	if err != nil {
+		ts = []domain.Transaction{}
+		return
+	}
 	for _, t := range repositoryTs {
 		reflection := reflect.ValueOf(t)
 		b := true

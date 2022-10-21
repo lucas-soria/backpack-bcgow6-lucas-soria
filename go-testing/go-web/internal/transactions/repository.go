@@ -91,8 +91,11 @@ func (r *repository) Save(transaction domain.Transaction) (t domain.Transaction,
 		return
 	}
 	ts = append(ts, transaction)
+	if err = r.db.Write(&ts); err != nil {
+		t = domain.Transaction{}
+		return
+	}
 	t = transaction
-	err = r.db.Write(&ts)
 	return
 }
 
@@ -130,7 +133,9 @@ func (r *repository) PartialUpdate(id int, transactionCode string, amount float6
 	}
 	ts[index].TransactionCode = transactionCode
 	ts[index].Amount = amount
-	err = r.db.Write(&ts)
+	if err = r.db.Write(&ts); err != nil {
+		return
+	}
 	t = ts[index]
 	return
 }
