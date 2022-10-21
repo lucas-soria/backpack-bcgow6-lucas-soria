@@ -46,5 +46,5 @@ func (f *fileStore) Write(data interface{}) (err error) {
 	if err != nil {
 		return fmt.Errorf("Error writing file:\n%+v", err)
 	}
-	return os.WriteFile(f.filepath, fileData, 777)
+	return os.WriteFile(f.filepath, fileData, 0777)
 }

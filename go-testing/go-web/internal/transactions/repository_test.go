@@ -47,8 +47,7 @@ func TestRepository_UpdateName(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
-	transactionRepository.Update(1, expected)
-	data, err := transactionRepository.FindOne(1)
+	data, err := transactionRepository.Update(1, expected)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
 	assert.Equal(t, true, mockStore.ReadInvoked)

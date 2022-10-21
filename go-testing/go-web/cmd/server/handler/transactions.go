@@ -61,7 +61,6 @@ func (c *Controller) HelloMessageHandler(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 // GetAll
@@ -80,7 +79,6 @@ func (c *Controller) GetAll(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 // GetOne
@@ -124,7 +122,6 @@ func (c *Controller) GetOne(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 func validateFields(err error) (errs string) {
@@ -175,7 +172,6 @@ func (c *Controller) Create(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 // Update
@@ -235,7 +231,6 @@ func (c *Controller) Update(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 // PartialUpdate
@@ -295,7 +290,6 @@ func (c *Controller) PartialUpdate(ctx *gin.Context) {
 			"",
 		),
 	)
-	return
 }
 
 // Delete
@@ -333,5 +327,4 @@ func (c *Controller) Delete(ctx *gin.Context) {
 		return
 	}
 	ctx.Status(http.StatusNoContent)
-	return
 }

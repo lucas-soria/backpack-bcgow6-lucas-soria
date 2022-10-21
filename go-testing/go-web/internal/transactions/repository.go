@@ -79,10 +79,17 @@ func (r *repository) FindOne(id int) (t domain.Transaction, err error) {
 }
 
 func (r *repository) Save(transaction domain.Transaction) (t domain.Transaction, err error) {
-	lastId, err := r.getLastId()
+	var lastId int
+	lastId, err = r.getLastId()
+	if err != nil {
+		return
+	}
 	transaction.Id = lastId + 1
 	var ts []domain.Transaction
 	err = r.db.Read(&ts)
+	if err != nil {
+		return
+	}
 	ts = append(ts, transaction)
 	t = transaction
 	err = r.db.Write(&ts)
@@ -98,6 +105,9 @@ func (r *repository) Update(id int, transaction domain.Transaction) (t domain.Tr
 	index, _ := r.findIndex(update.Id)
 	var ts []domain.Transaction
 	err = r.db.Read(&ts)
+	if err != nil {
+		return
+	}
 	oid := ts[index].Id
 	ts[index] = transaction
 	ts[index].Id = oid
@@ -115,6 +125,9 @@ func (r *repository) PartialUpdate(id int, transactionCode string, amount float6
 	index, _ := r.findIndex(update.Id)
 	var ts []domain.Transaction
 	err = r.db.Read(&ts)
+	if err != nil {
+		return
+	}
 	ts[index].TransactionCode = transactionCode
 	ts[index].Amount = amount
 	err = r.db.Write(&ts)
@@ -130,6 +143,9 @@ func (r *repository) Remove(id int) (deletedId int, err error) {
 	}
 	var ts []domain.Transaction
 	err = r.db.Read(&ts)
+	if err != nil {
+		return
+	}
 	ts = append(ts[:index], ts[index+1:]...)
 	err = r.db.Write(&ts)
 	deletedId = id
