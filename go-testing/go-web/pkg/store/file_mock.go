@@ -6,33 +6,13 @@ import (
 
 type Mock struct {
 	transactions []domain.Transaction
+	ErrNotfound  error
 	ReadInvoked  bool
 }
 
-var MockTransactions = []domain.Transaction{
-	{
-		Id:              1,
-		TransactionCode: "Before Update",
-		Currency:        "ARS",
-		Amount:          215.53,
-		Sender:          "987asd9asd",
-		Receiver:        "89as99a9",
-		Date:            "2022-10-20T00:00:00-03:00",
-	},
-	{
-		Id:              2,
-		TransactionCode: "3345fse",
-		Currency:        "USD",
-		Amount:          30.67,
-		Sender:          "987ssd9asd",
-		Receiver:        "80as99a9",
-		Date:            "2022-10-20T00:00:00-03:00",
-	},
-}
-
-func NewMock() Mock {
+func NewMock(transactions []domain.Transaction) Mock {
 	return Mock{
-		transactions: MockTransactions,
+		transactions: transactions,
 	}
 }
 

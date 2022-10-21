@@ -16,7 +16,27 @@ func TestRepository_FindAll(t *testing.T) {
 }
 
 func TestRepository_UpdateName(t *testing.T) {
-	mockStore := store.NewMock()
+	mockTransactions := []domain.Transaction{
+		{
+			Id:              1,
+			TransactionCode: "Before Update",
+			Currency:        "ARS",
+			Amount:          215.53,
+			Sender:          "987asd9asd",
+			Receiver:        "89as99a9",
+			Date:            "2022-10-20T00:00:00-03:00",
+		},
+		{
+			Id:              2,
+			TransactionCode: "3345fse",
+			Currency:        "USD",
+			Amount:          30.67,
+			Sender:          "987ssd9asd",
+			Receiver:        "80as99a9",
+			Date:            "2022-10-20T00:00:00-03:00",
+		},
+	}
+	mockStore := store.NewMock(mockTransactions)
 	transactionRepository := NewRepository(&mockStore)
 	expected := domain.Transaction{
 		Id:              1,
@@ -28,7 +48,8 @@ func TestRepository_UpdateName(t *testing.T) {
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
 	transactionRepository.Update(1, expected)
-	data, _ := transactionRepository.FindOne(1)
+	data, err := transactionRepository.FindOne(1)
+	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
 	assert.Equal(t, true, mockStore.ReadInvoked)
 }
