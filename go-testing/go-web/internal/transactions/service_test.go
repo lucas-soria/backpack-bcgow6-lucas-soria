@@ -30,9 +30,7 @@ func TestService_Update(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
+	searchID := 1
 	expected := domain.Transaction{
 		Id:              1,
 		TransactionCode: "After Update",
@@ -42,10 +40,13 @@ func TestService_Update(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
-	data, err := transactionService.Update(1, expected)
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
+	data, err := transactionService.Update(searchID, expected)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
-	assert.Equal(t, true, mockStore.ReadInvoked)
+	assert.True(t, mockStore.ReadInvoked)
 }
 
 func removeOK(t *testing.T) {
@@ -69,9 +70,7 @@ func removeOK(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
+	searchID := 1
 	expected := domain.Transaction{
 		Id:              1,
 		TransactionCode: "After Update",
@@ -81,10 +80,13 @@ func removeOK(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
-	id, err := transactionService.Remove(1)
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
+	id, err := transactionService.Remove(searchID)
 	assert.Nil(t, err)
 	assert.Equal(t, expected.Id, id)
-	assert.Equal(t, true, mockStore.ReadInvoked)
+	assert.True(t, mockStore.ReadInvoked)
 }
 
 func removeNotFound(t *testing.T) {
@@ -108,14 +110,16 @@ func removeNotFound(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
+	searchID := 1900
+	expectedErr := fmt.Sprintf("%s. %s: id %d", CantDelete, TransactionNotFound, searchID)
+	expected := 0
+	mockStore := store.Mock{Transactions: mockTransactions}
 	transactionRepository := NewRepository(&mockStore)
 	transactionService := NewService(transactionRepository)
-	expected := 0
-	id, err := transactionService.Remove(1900)
-	assert.EqualError(t, err, fmt.Sprintf("%s. %s: id %d", CantDelete, TransactionNotFound, 1900))
+	id, err := transactionService.Remove(searchID)
+	assert.EqualError(t, err, expectedErr)
 	assert.Equal(t, expected, id)
-	assert.Equal(t, true, mockStore.ReadInvoked)
+	assert.True(t, mockStore.ReadInvoked)
 }
 
 func removeNotFoundForced(t *testing.T) {
@@ -139,14 +143,15 @@ func removeNotFoundForced(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
+	searchID := 1900
+	expectedErr := fmt.Errorf("%s. %s: id %d", CantDelete, TransactionNotFound, searchID)
 	expected := 0
-	expectedErr := fmt.Errorf("%s. %s: id %d", CantDelete, TransactionNotFound, 1900)
-	repo := NewRepository(&mockStore)
-	transactionRepository := NewMockRepository(&mockStore, repo, expectedErr)
-	transactionService := NewService(&transactionRepository)
-	id, err := transactionService.Remove(1900)
-	assert.Equal(t, err, expectedErr)
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	mockRepository := MockRepository{db: &mockStore, repo: transactionRepository, RemoveErr: expectedErr}
+	transactionService := NewService(&mockRepository)
+	id, err := transactionService.Remove(searchID)
+	assert.EqualError(t, err, expectedErr.Error())
 	assert.Equal(t, expected, id)
 }
 
@@ -177,10 +182,10 @@ func testGetAll(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
+	query := url.Values{}
+	mockStore := store.Mock{Transactions: mockTransactions}
 	transactionRepository := NewRepository(&mockStore)
 	transactionService := NewService(transactionRepository)
-	query := url.Values{}
 	data, err := transactionService.GetAll(query)
 	assert.Nil(t, err)
 	assert.Equal(t, mockTransactions, data)
@@ -207,9 +212,6 @@ func testGetAllQueried(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
 	query := url.Values{}
 	query.Set("currency", "USD")
 	expected := []domain.Transaction{
@@ -223,20 +225,24 @@ func testGetAllQueried(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
 	data, err := transactionService.GetAll(query)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
 }
 
 func testGetAllErrRepository(t *testing.T) {
-	mockStore := store.NewMock([]domain.Transaction{})
+	expectedErr := fmt.Errorf("forced error reading storage")
+	expected := make([]domain.Transaction, 0)
+	query := url.Values{}
+	mockStore := store.Mock{Transactions: []domain.Transaction{}, ErrRead: expectedErr}
 	transactionRepository := NewRepository(&mockStore)
 	transactionService := NewService(transactionRepository)
-	query := url.Values{}
-	mockStore.ErrRead = fmt.Errorf("forced error reading storage")
 	data, err := transactionService.GetAll(query)
-	assert.EqualError(t, err, mockStore.ErrRead.Error())
-	assert.Equal(t, []domain.Transaction{}, data)
+	assert.EqualError(t, err, expectedErr.Error())
+	assert.Equal(t, expected, data)
 }
 
 func TestService_GetAll(t *testing.T) {
@@ -266,9 +272,6 @@ func TestService_Store(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
 	expected := domain.Transaction{
 		Id:              3,
 		TransactionCode: "ovd98dfg8dfs",
@@ -278,6 +281,9 @@ func TestService_Store(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
 	data, err := transactionService.Store(expected)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
@@ -295,9 +301,7 @@ func TestService_PartialUpdate(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
+	searchID := 1
 	expected := domain.Transaction{
 		Id:              1,
 		TransactionCode: "After Update",
@@ -307,7 +311,10 @@ func TestService_PartialUpdate(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
-	data, err := transactionService.PartialUpdate(1, "After Update", 0)
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
+	data, err := transactionService.PartialUpdate(searchID, "After Update", 0)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
 }
@@ -333,9 +340,7 @@ func TestService_GetOne(t *testing.T) {
 			Date:            "2022-10-20T00:00:00-03:00",
 		},
 	}
-	mockStore := store.NewMock(mockTransactions)
-	transactionRepository := NewRepository(&mockStore)
-	transactionService := NewService(transactionRepository)
+	searchID := 1
 	expected := domain.Transaction{
 		Id:              1,
 		TransactionCode: "kjnas76ask",
@@ -345,7 +350,10 @@ func TestService_GetOne(t *testing.T) {
 		Receiver:        "89as99a9",
 		Date:            "2022-10-20T00:00:00-03:00",
 	}
-	data, err := transactionService.GetOne(1)
+	mockStore := store.Mock{Transactions: mockTransactions}
+	transactionRepository := NewRepository(&mockStore)
+	transactionService := NewService(transactionRepository)
+	data, err := transactionService.GetOne(searchID)
 	assert.Nil(t, err)
 	assert.Equal(t, expected, data)
 }

@@ -5,17 +5,11 @@ import (
 )
 
 type Mock struct {
-	transactions []domain.Transaction
+	Transactions []domain.Transaction
 	ErrRead      error
 	ErrWrite     error
 	ReadInvoked  bool
 	WriteInvoked bool
-}
-
-func NewMock(transactions []domain.Transaction) Mock {
-	return Mock{
-		transactions: transactions,
-	}
 }
 
 func (s *Mock) Read(data interface{}) (err error) {
@@ -24,7 +18,7 @@ func (s *Mock) Read(data interface{}) (err error) {
 		return s.ErrRead
 	}
 	castedData := data.(*[]domain.Transaction)
-	*castedData = s.transactions
+	*castedData = s.Transactions
 	return
 }
 
@@ -34,6 +28,6 @@ func (s *Mock) Write(data interface{}) (err error) {
 		return s.ErrWrite
 	}
 	castedData := data.(*[]domain.Transaction)
-	s.transactions = append(s.transactions, *castedData...)
+	s.Transactions = append(s.Transactions, *castedData...)
 	return
 }

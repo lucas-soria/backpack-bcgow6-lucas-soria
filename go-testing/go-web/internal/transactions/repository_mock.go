@@ -5,43 +5,35 @@ import (
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/store"
 )
 
-type mockRepository struct {
-	db   store.Store
-	repo Repository
-	err  error
+type MockRepository struct {
+	db        store.Store
+	repo      Repository
+	RemoveErr error
 }
 
-func NewMockRepository(db store.Store, repo Repository, err error) mockRepository {
-	return mockRepository{
-		db:   db,
-		repo: repo,
-		err:  err,
-	}
-}
-
-func (r *mockRepository) FindAll() (ts []domain.Transaction, err error) {
+func (r *MockRepository) FindAll() (ts []domain.Transaction, err error) {
 	return
 }
 
-func (r *mockRepository) FindOne(id int) (t domain.Transaction, err error) {
+func (r *MockRepository) FindOne(id int) (t domain.Transaction, err error) {
 	return
 }
 
-func (r *mockRepository) Save(transaction domain.Transaction) (t domain.Transaction, err error) {
+func (r *MockRepository) Save(transaction domain.Transaction) (t domain.Transaction, err error) {
 	return
 }
 
-func (r *mockRepository) Update(id int, transaction domain.Transaction) (t domain.Transaction, err error) {
+func (r *MockRepository) Update(id int, transaction domain.Transaction) (t domain.Transaction, err error) {
 	return
 }
 
-func (r *mockRepository) PartialUpdate(id int, transactionCode string, amount float64) (t domain.Transaction, err error) {
+func (r *MockRepository) PartialUpdate(id int, transactionCode string, amount float64) (t domain.Transaction, err error) {
 	return
 }
 
-func (r *mockRepository) Remove(id int) (deletedID int, err error) {
-	if r.err != nil {
-		return 0, r.err
+func (r *MockRepository) Remove(id int) (deletedID int, err error) {
+	if r.RemoveErr != nil {
+		return 0, r.RemoveErr
 	}
 	return r.repo.Remove(id)
 }
