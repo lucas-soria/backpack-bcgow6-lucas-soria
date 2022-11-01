@@ -1,0 +1,38 @@
+Table venta {
+  id int [pk]
+  cliente_id int
+  nro_factura_afip long [unique]
+  fecha datetime
+}
+
+Table venta_producto {
+  id int [pk]
+  venta_id int
+  producto_id int
+  cantidad int
+  precio_unitario double
+}
+
+Table producto {
+  id int [pk]
+  nombre varchar
+  detalle varchar
+  precio double
+  cantidad_en_stock int
+  peso_volumen_unidad double
+}
+
+Table cliente {
+  id int [pk]
+  nombre varchar
+  apellido varchar
+  dni long [unique]
+  email varchar [unique]
+  direccion varchar
+  telefono varchar
+}
+
+Ref: venta.cliente_id > cliente.id
+
+Ref: venta.id < venta_producto.venta_id
+Ref: producto.id < venta_producto.producto_id

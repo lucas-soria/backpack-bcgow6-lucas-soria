@@ -1,0 +1,37 @@
+Table coche {
+  id int [pk]
+  patente varchar [unique]
+  marca varchar
+  modelo varchar
+  ano int
+  puertas int
+  motor varchar
+  rodado varchar
+}
+
+Table cliente_coche {
+  cliente_id int [pk]
+  coche_id int [pk]
+}
+
+Table cliente {
+  id int [pk]
+  dni long [unique]
+  nombre varchar
+  apellido varchar
+  email varchar
+  direccion varchar
+  telefono varchar
+}
+
+Table service {
+  id int [pk]
+  coche_id int
+  fecha datetime
+  lugar varchar
+}
+
+Ref: cliente.id > cliente_coche.cliente_id
+Ref: coche.id > cliente_coche.coche_id
+
+Ref: service.coche_id < coche.id

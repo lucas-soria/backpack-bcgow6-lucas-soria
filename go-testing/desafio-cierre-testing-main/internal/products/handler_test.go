@@ -91,12 +91,12 @@ func testGetProductsWithErr(t *testing.T) {
 	assert.Equal(t, expected, responseObject)
 }
 
-func testBadPathSuit(t *testing.T) {
+func testSadPathSuit(t *testing.T) {
 	t.Run("Bad SellerID", testGetProductsBadSellerID)
 	t.Run("Error on service", testGetProductsWithErr)
 }
 
 func TestSuitGET(t *testing.T) {
 	t.Run("Happy path", testGetProductsOk)
-	t.Run("Sad Path", testBadPathSuit)
+	t.Run("Sad Path", testSadPathSuit)
 }
