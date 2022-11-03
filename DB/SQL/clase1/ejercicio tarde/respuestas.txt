@@ -1,0 +1,5 @@
+2)
+a) PK cliente: dni, cada persona tiene el suyo unico
+b) PK planes: int auto incremental, porque es interno de la empresa y asi no hace falta preocuparse por que sea unico
+c) yo hice un m a m porque asi dejaba que un mismo cliente tenga mas de un plan. Por que alguien querria eso? No se, pero la opcion esta. Las FK de la tabla intermedia son DNI y id de cliente y plan respectivamente
+

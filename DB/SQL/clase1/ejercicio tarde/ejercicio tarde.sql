@@ -73,25 +73,23 @@ select * from cliente;
 select * from cliente_plan;
 
 /* 10 queries */
--- 1. cliente Perez
-
--- 2. group cliente apellido
-
--- 3. group cliente_plan plan_id
-
--- 4. group cliente provincia y ciudad
-
--- 5. select rango etareo
-
---
-
-
-
-
-
-
-
-
-
-
-
+-- 1. Saber quien se llama Perez
+select * from cliente where apellido = "Perez";
+-- 2. Para ver cuanto se repite cada apellido
+select apellido, count(apellido) as cantidad from cliente group by apellido;
+-- 3. Ver la cantidad comprada de cada plan
+select plan_id, count(plan_id) as cantidad from cliente_plan group by plan_id;
+-- 4. Ordenamiento de clientes por provincia
+select * from cliente order by provincia, ciudad;
+-- 5. Ver clientes nacidos en un rango
+select * from cliente where fecha_nacimiento between "1970-01-01" and "2004-12-31";
+-- 6. Ver la cantidad comprada de cada plan y ordenarla por mayor comprado
+select plan_id, count(plan_id) as cantidad from cliente_plan group by plan_id order by cantidad desc;
+-- 7. Vemos en que ciudad se encuentra mayor cantidad de clientes
+select provincia, ciudad, count(ciudad) as cantidad from cliente group by provincia, ciudad order by cantidad desc;
+-- 8. Vemos donde tenemos menos de 2 clientes
+select provincia, ciudad, count(ciudad) as cantidad from cliente group by provincia, ciudad having cantidad < 2 order by cantidad desc;
+-- 9. Ver que clientes tiene mas de 1 plan comprado
+select cliente_dni, count(cliente_dni) as cantidad from cliente_plan group by cliente_dni having cantidad > 1 order by cantidad desc;
+-- 10. Ver quienes tienen el plan 3
+select * from cliente_plan where plan_id = 3;

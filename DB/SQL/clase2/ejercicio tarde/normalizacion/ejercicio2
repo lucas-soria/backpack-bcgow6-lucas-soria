@@ -1,0 +1,128 @@
+Origen:
+Factura:
+- id_factura
+- fecha_factura
+- forma_pago
+- IVA
+- cantidad
+- importe
+- nombre_cliente
+- apellido_cliente
+- direccion_cliente
+- descripcion_articulo
+
+1FN:
+Con la estructura planteada se podian repetir todos los valores en caso de que la factura se emita para varios productos.
+Se separan en 3 entidades distintas: factura, cliente y articulo.
+- Articulo:
+	- id
+	- descripcion
+	- precio
+
+- Factura:
+	- id
+	- id_cliente
+	- fecha
+	- forma_pago
+	- IVA
+	- id_producto
+	- cantidad
+	- importe
+
+- Cliente:
+	- id
+	- nombre
+	- apellido
+	- direccion
+
+2FN: 
+factura tiene ahora valores que no dependen de la clave primaria, como por ejemplo la cantidad de 
+- Articulo:
+	- id
+	- descripcion
+	- precio
+
+- Factura:
+	- id
+	- id_cliente
+	- fecha
+	- forma_pago
+	- IVA
+	- importe
+
+- Factura_Articulo:
+	- id_factura
+	- id_articulo
+	- cantidad
+
+- Cliente:
+	- id
+	- nombre
+	- apellido
+	- direccion
+
+
+3FN:
+Eliminamos las dependencias transitorias (importe, que depende la suma de precios y cantidades)
+- Articulo:
+	- id
+	- precio
+	- descripcion
+
+- Factura:
+	- id
+	- cliente_id
+	- fecha_emision
+	- forma_pago
+	- IVA
+
+- Factura_Articulo:
+	- id_factura
+	- id_articulo
+	- cantidad
+	- precio
+
+- Cliente:
+	- id
+	- nombre
+	- apellido
+	- direccion
+
+Se repite el precio porque este puede cambiar en producto, y debe mantenerse estático en la factura, ya que es algo que sucedió en el pasado y el importe pagado no puede variar.
+
+
+
+Código para la imagen:
+table factura {
+  id int [pk]
+  cliente_id int
+  fecha_emision timestamp
+  forma_pago varchar
+  IVA double
+}
+
+table factura_articulo {
+  id_factura int [pk]
+  id_articulo int [pk]
+  cantidad int
+  precio double
+}
+
+table articulo {
+  id int [pk]
+  precio double
+  descripcion varchar
+}
+
+Ref: factura_articulo.id_factura > factura.id
+Ref: factura_articulo.id_articulo > articulo.id
+
+
+table cliente {
+  id int [pk]
+  nombre varchar
+  apellido varchar
+  direccion varchar
+}
+
+Ref: cliente.id > factura.cliente_id
