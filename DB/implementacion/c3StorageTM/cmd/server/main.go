@@ -1,30 +1,21 @@
 package main
 
 import (
-	"dynamodb_go/cmd/server/handler"
-	"dynamodb_go/users"
-	"dynamodb_go/util"
-
 	"github.com/gin-gonic/gin"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/cmd/server/routes"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/util"
+	"log"
 )
 
 func main() {
 	engine := gin.Default()
-	dDB, err := util.InitDynamo()
-	if err != nil {
-		panic(err)
+	dataBase, errInit := util.InitDynamo()
+	if errInit != nil {
+		log.Fatal(errInit)
 	}
-
-	repo := users.NewDynamoRepository(dDB)
-	service := users.NewService(repo)
-	u := handler.NewUser(service)
-
-	ur := engine.Group("/api/v1/users")
-	ur.POST("/", u.Store())
-	ur.GET("/:id", u.GetOne())
-	ur.DELETE("/:id", u.Delete())
-
-	if err := engine.Run(); err != nil {
-		panic(err)
+	router := routes.NewRouter(engine, dataBase)
+	router.MapRoutes()
+	if errRun := engine.Run(); errRun != nil {
+		panic(errRun)
 	}
 }

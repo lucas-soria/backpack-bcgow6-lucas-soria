@@ -1,4 +1,4 @@
-package models
+package domain
 
 import (
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	Id         string `json:"id"`
+	ID         string `json:"id"`
 	Firstname  string `json:"firstname"`
 	Lastname   string `json:"lastname"`
 	Username   string `json:"username"`

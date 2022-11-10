@@ -8,13 +8,12 @@ import (
 )
 
 func InitDynamo() (*dynamodb.DynamoDB, error) {
-	//region := "us-west-2"
-	region2 := "us-east-1"
+	region := "us-east-1"
 	endpoint := "http://localhost:8000"
 	cred := credentials.NewStaticCredentials("local", "local", "")
-	sess, err := session.NewSession(aws.NewConfig().WithEndpoint(endpoint).WithRegion(region2).WithCredentials(cred))
-	if err != nil {
-		return nil, err
+	sess, errSession := session.NewSession(aws.NewConfig().WithEndpoint(endpoint).WithRegion(region).WithCredentials(cred))
+	if errSession != nil {
+		return nil, errSession
 	}
 	dynamo := dynamodb.New(sess)
 	return dynamo, nil
