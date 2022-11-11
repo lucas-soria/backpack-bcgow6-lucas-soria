@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/cmd/server/handler/request"
+	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/internal/domain"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/internal/user"
 	"github.com/lucas-soria/backpack-bcgow6-lucas-soria/pkg/web"
 	"net/http"
@@ -40,18 +41,21 @@ func (user *User) GetAll() gin.HandlerFunc {
 			ctx.JSON(http.StatusNotFound, web.NewResponse(nil, errGet.Error(), http.StatusNotFound))
 			return
 		}
+		if usersObtained == nil {
+			ctx.JSON(http.StatusOK, web.NewResponse([]domain.User{}, "", http.StatusOK))
+		}
 		ctx.JSON(http.StatusOK, web.NewResponse(usersObtained, "", http.StatusOK))
 	}
 }
 
 func (user *User) Store() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var userPOSTRequest request.UserPOSTRequest
-		if errBind := ctx.ShouldBindJSON(&userPOSTRequest); errBind != nil {
+		var userRequest request.UserRequest
+		if errBind := ctx.ShouldBindJSON(&userRequest); errBind != nil {
 			ctx.JSON(http.StatusBadRequest, web.NewResponse(nil, errBind.Error(), http.StatusBadRequest))
 			return
 		}
-		userMapped := userPOSTRequest.MapToDomain()
+		userMapped := userRequest.MapToDomain()
 		errStore := user.service.Store(ctx, &userMapped)
 		if errStore != nil {
 			ctx.JSON(http.StatusConflict, web.NewResponse(nil, errStore.Error(), http.StatusConflict))
@@ -63,7 +67,19 @@ func (user *User) Store() gin.HandlerFunc {
 
 func (user *User) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-
+		id := ctx.Param("id")
+		var userRequest request.UserRequest
+		if errBind := ctx.ShouldBindJSON(&userRequest); errBind != nil {
+			ctx.JSON(http.StatusBadRequest, web.NewResponse(nil, errBind.Error(), http.StatusBadRequest))
+			return
+		}
+		userMapped := userRequest.MapToDomain()
+		errUpdate := user.service.Update(ctx, &userMapped, id)
+		if errUpdate != nil {
+			ctx.JSON(http.StatusInternalServerError, web.NewResponse(nil, errUpdate.Error(), http.StatusInternalServerError))
+			return
+		}
+		ctx.JSON(http.StatusOK, web.NewResponse(userMapped, "", http.StatusOK))
 	}
 }
 

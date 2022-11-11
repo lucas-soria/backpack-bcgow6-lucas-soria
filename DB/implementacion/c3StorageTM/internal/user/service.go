@@ -7,7 +7,7 @@ import (
 
 type Service interface {
 	Get(ctx *gin.Context, id string) (*domain.User, error)
-	GetAll(ctx *gin.Context) (*domain.User, error)
+	GetAll(ctx *gin.Context) ([]*domain.User, error)
 	Store(ctx *gin.Context, user *domain.User) error
 	Update(ctx *gin.Context, user *domain.User, id string) error
 	Delete(ctx *gin.Context, id string) error
@@ -27,7 +27,7 @@ func (service *service) Get(ctx *gin.Context, id string) (*domain.User, error) {
 	return service.repository.Get(ctx, id)
 }
 
-func (service *service) GetAll(ctx *gin.Context) (*domain.User, error) {
+func (service *service) GetAll(ctx *gin.Context) ([]*domain.User, error) {
 	return service.repository.GetAll(ctx)
 }
 
@@ -36,7 +36,24 @@ func (service *service) Store(ctx *gin.Context, user *domain.User) error {
 }
 
 func (service *service) Update(ctx *gin.Context, user *domain.User, id string) error {
-	return service.repository.Update(ctx, user, id)
+	userToUpdate, errGet := service.Get(ctx, id)
+	if errGet != nil {
+		return errGet
+	}
+	/*
+		userToUpdate.Firstname = user.Firstname
+		userToUpdate.Lastname = user.Lastname
+		userToUpdate.Username = user.Username
+		userToUpdate.Password = user.Password
+		userToUpdate.Email = user.Email
+		userToUpdate.IP = user.IP
+		userToUpdate.MacAddress = user.MacAddress
+		userToUpdate.Website = user.Website
+		userToUpdate.Image = user.Image
+		return service.repository.Update(ctx, userToUpdate)
+	*/
+	user.ID = userToUpdate.ID
+	return service.repository.Update(ctx, user)
 }
 
 func (service *service) Delete(ctx *gin.Context, id string) error {
