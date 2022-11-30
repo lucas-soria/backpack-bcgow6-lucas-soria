@@ -40,18 +40,6 @@ func (service *service) Update(ctx *gin.Context, user *domain.User, id string) e
 	if errGet != nil {
 		return errGet
 	}
-	/*
-		userToUpdate.Firstname = user.Firstname
-		userToUpdate.Lastname = user.Lastname
-		userToUpdate.Username = user.Username
-		userToUpdate.Password = user.Password
-		userToUpdate.Email = user.Email
-		userToUpdate.IP = user.IP
-		userToUpdate.MacAddress = user.MacAddress
-		userToUpdate.Website = user.Website
-		userToUpdate.Image = user.Image
-		return service.repository.Update(ctx, userToUpdate)
-	*/
 	user.ID = userToUpdate.ID
 	return service.repository.Update(ctx, user)
 }
